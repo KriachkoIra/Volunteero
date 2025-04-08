@@ -2,8 +2,6 @@ source "https://rubygems.org"
 
 gem "sinatra"
 gem "sinatra-activerecord"
-gem "sqlite3", group: :development
-gem "pg", group: :production
 gem "rake"
 gem "bcrypt"
 gem "sinatra-flash"
@@ -13,8 +11,13 @@ gem "capybara"
 gem "factory_bot"
 gem "database_cleaner"
 gem "sidekiq"
-gem "puma", group: :production
 gem "rack-cors"
 gem "rack"
 gem "rackup"
 gem "rack-contrib"
+gem "sqlite3"
+
+group :production do
+  gem "pg"
+  gem "puma"
+end
