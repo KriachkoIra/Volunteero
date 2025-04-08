@@ -1,0 +1,20 @@
+en:
+  welcome: "Welcome to Volunteero!"
+  login:
+    prompt: "Please log in."
+    success: "Logged in successfully!"
+    failure: "Invalid email or password."
+  logout:
+    success: "Logged out successfully!"
+  register:
+    success: "Registered successfully!"
+  tasks:
+    created: "Task created successfully!"
+    updated: "Task updated successfully!"
+    deleted: "Task deleted successfully!"
+    not_found: "Task not found."
+  applications:
+    created: "Application submitted successfully!"
+  errors:
+    not_logged_in: "You must be logged in to perform this action."
+    unauthorized: "You are not authorized to perform this action."

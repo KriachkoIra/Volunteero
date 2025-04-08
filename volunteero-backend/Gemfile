@@ -1,0 +1,20 @@
+source "https://rubygems.org"
+
+gem "sinatra"
+gem "sinatra-activerecord"
+gem "sqlite3", group: :development
+gem "pg", group: :production
+gem "rake"
+gem "bcrypt"
+gem "sinatra-flash"
+gem "i18n"
+gem "rspec"
+gem "capybara"
+gem "factory_bot"
+gem "database_cleaner"
+gem "sidekiq"
+gem "puma", group: :production
+gem "rack-cors"
+gem "rack"
+gem "rackup"
+gem "rack-contrib"
