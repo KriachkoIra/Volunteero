@@ -2,28 +2,45 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [email, setEmaiField] = useState("");
   const [name, setNameField] = useState("");
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState("");
+  const [isOrganizer, setIsOrganizer] = useState(false);
 
   const navigate = useNavigate();
 
   return (
     <div className="flex h-[calc(100vh-64px)] justify-center xl:gap-28 lg:gap-20 gap-14">
       <div className="w-[350px]">
-        <div className="flex flex-col w-[350px] gap-5 m-auto my-[160px]">
-          <h3 className="text-4xl login-text text-primary">Log In</h3>
+        <div className="flex flex-col w-[350px] gap-5 m-auto my-[100px]">
+          <h3 className="text-4xl login-text text-primary">Register</h3>
           <p className="text-md">
             Welcome to Volunteero! Please fill in your credentials.
           </p>
           <form onSubmit={(e) => {}} className="flex flex-col gap-6">
+            <select
+              value={isOrganizer}
+              onChange={(e) => setIsOrganizer(e.target.value)}
+              className="bg-secondary py-2 px-1"
+            >
+              <option value={false}>I want to be a volunteer</option>
+              <option value={true}>I want to be an organizer</option>
+            </select>
             <input
               type="email"
               placeholder="email@gmail.com"
               value={email}
               onChange={(e) => setEmaiField(e.target.value)}
+              className="border-b-2 border-black py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="organization name"
+              value={name}
+              onChange={(e) => setNameField(e.target.value)}
               className="border-b-2 border-black py-2"
               required
             />
@@ -37,16 +54,16 @@ export default function LoginPage() {
             />
             {alert && <div>{alert}</div>}
             <button className="bg-primary hover:opacity-80 text-white py-2 mt-2">
-              Log In
+              Register
             </button>
           </form>
           <div>
-            <span>Don't have an account yet? </span>
+            <span>Already have an account? </span>
             <button
               className="text-primary hover:opacity-80"
-              onClick={() => navigate("/auth/register")}
+              onClick={() => navigate("/auth/login")}
             >
-              Register
+              Log In
             </button>
           </div>
         </div>

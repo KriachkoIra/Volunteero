@@ -19,22 +19,21 @@ export default function Homepage() {
           or an organization seeking support — Volunteero makes it easy to join
           forces, create impact, and build a better world together.
         </p>
-        <div className="flex gap-6 mt-6">
-          <div className="h-34 w-32 border-2 border-e-gray-600 p-4 text-center">
-            <p className="bg-accent w-fit m-auto px-2 rounded-full mb-2">1</p>
-            <p>Set up your account</p>
-          </div>
-          <div className="h-34 w-32 border-2 border-e-gray-600 p-4 text-center">
-            <p className="bg-accent w-fit m-auto px-2 rounded-full mb-2">2</p>
-            <p>Join a volunteering task</p>
-          </div>
-          <div className="h-34 w-32 border-2 border-e-gray-600 p-4 text-center">
-            <p className="bg-accent w-fit m-auto px-2 rounded-full mb-2">3</p>
-            <p>Make the world better</p>
-          </div>
-        </div>
+
+        <p className="mt-6">
+          <span className="bg-secondary mr-3 px-3 py-1 rounded-full">1</span>{" "}
+          Set up your account
+        </p>
+        <p className="mt-6">
+          <span className="bg-secondary mr-3 px-3 py-1 rounded-full">2</span>{" "}
+          Join a volunteering task
+        </p>
+        <p className="mt-6">
+          <span className="bg-secondary mr-3 px-3 py-1 rounded-full">3</span>{" "}
+          Make the world better
+        </p>
         <button
-          className=" mt-8 bg-primary hover:opacity-80 text-white p-4"
+          className=" mt-10 bg-primary hover:opacity-80 text-white p-4"
           onClick={() => navigate("/participate")}
         >
           Participate now!
