@@ -6,8 +6,13 @@ import RouteNotFound from "./components/RouteNotFound";
 import TasksPage from "./components/TasksPage";
 import ProfilePage from "./components/ProfilePage";
 import RegisterPage from "./components/RegisterPage";
+import axios from "axios";
+import AddTask from "./components/AddTask";
 
 function App() {
+  axios.defaults.baseURL = "http://localhost:4567";
+  axios.defaults.withCredentials = true;
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -17,6 +22,7 @@ function App() {
         <Route path="/auth/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/participate" element={<TasksPage />} />
+        <Route path="/add-task" element={<AddTask />} />
         <Route path="*" element={<RouteNotFound />} />
       </Routes>
     </BrowserRouter>

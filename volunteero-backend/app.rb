@@ -1,23 +1,42 @@
 require './config/environment'
 require 'rack/contrib'
+require 'dotenv/load'
 Dir[File.join(__dir__, 'app/workers', '*.rb')].each { |file| require file }
 
 class App < Sinatra::Base
   enable :sessions
-  set :session_secret, ENV.fetch('SESSION_SECRET') { SecureRandom.hex(64) }
+
+  set :sessions,
+    key: 'rack.session',
+    path: '/',
+    secret: ENV['SESSION_SECRET'],
+    same_site: :lax,  
+    secure: false     
   register Sinatra::Flash
+
+  before do
+    if request.content_type == 'application/json'
+      body = request.body.read
+      params.merge!(JSON.parse(body)) unless body.strip.empty?
+    end
+  end
 
   use Rack::Cors do
     allow do
-      origins '*' # У production вкажіть конкретний домен вашого фронтенду
-      resource '*', headers: :any, methods: [:get, :post, :put, :delete, :options]
+      origins 'http://localhost:5173'  
+      resource '*',
+               headers: :any,
+               methods: [:get, :post, :put, :delete, :options],
+               credentials: true     
     end
   end
 
   use Rack::Locale
 
   before do
-    I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE']&.split(',')&.first&.to_sym || I18n.default_locale
+    raw_locale = request.env['HTTP_ACCEPT_LANGUAGE']&.split(',')&.first
+    locale = raw_locale&.split('-')&.first || 'en'
+    I18n.locale = locale.to_sym
   end
 
   helpers do
@@ -53,6 +72,7 @@ class App < Sinatra::Base
   get '/login' do
     content_type :json
     { message: I18n.t('login.prompt') }.to_json
+    puts "Current user: #{current_user.inspect}"
   end
 
   post '/login' do
@@ -228,3 +248,5 @@ class NotifyOrganizerWorker
     puts "Notifying organizer #{organizer_id} about application to task #{task_id}"
   end
 end
+
+App.run! if __FILE__ == $0

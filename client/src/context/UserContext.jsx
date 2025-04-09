@@ -7,21 +7,22 @@ export function UserContextProvider({ children }) {
   const [id, setId] = useState(null);
   const [email, setEmail] = useState(null);
   const [name, setName] = useState(null);
+  const [role, setRole] = useState(null);
 
-  useEffect(() => {
-    axios
-      .get("/auth/verify", { withCredentials: true })
-      .then((res) => {
-        setId(res.data.id);
-        setEmail(res.data.email);
-        setName(res.data.name);
-      })
-      .catch((err) => {
-        setId(null);
-        setName(null);
-        console.error(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/auth/verify", { withCredentials: true })
+  //     .then((res) => {
+  //       setId(res.data.id);
+  //       setEmail(res.data.email);
+  //       setName(res.data.name);
+  //     })
+  //     .catch((err) => {
+  //       setId(null);
+  //       setName(null);
+  //       console.error(err);
+  //     });
+  // }, []);
 
   return (
     <UserContext.Provider
@@ -32,6 +33,8 @@ export function UserContextProvider({ children }) {
         setEmail,
         name,
         setName,
+        role,
+        setRole,
       }}
     >
       {children}

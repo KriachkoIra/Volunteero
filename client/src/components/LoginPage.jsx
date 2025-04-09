@@ -1,14 +1,41 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { UserContext } from "../context/UserContext";
+import axios from "axios";
 
 export default function LoginPage() {
   const [email, setEmaiField] = useState("");
-  const [name, setNameField] = useState("");
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState("");
 
   const navigate = useNavigate();
+
+  const { setId, setName, setRole } = useContext(UserContext);
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+
+    const link = "http://localhost:4567/login";
+
+    await axios
+      .post(link, { email, password })
+      .then(async (res) => {
+        console.log(res);
+        setId(res.data.user.id);
+        setName(res.data.user.name);
+        setRole(res.data.user.role);
+        navigate("/");
+      })
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          setAlert(err.response.data.error);
+        } else {
+          setAlert("Помилка з підключенням до сервера");
+        }
+        console.log(err);
+      });
+  };
 
   return (
     <div className="flex h-[calc(100vh-64px)] justify-center xl:gap-28 lg:gap-20 gap-14">
@@ -18,7 +45,7 @@ export default function LoginPage() {
           <p className="text-md">
             Welcome to Volunteero! Please fill in your credentials.
           </p>
-          <form onSubmit={(e) => {}} className="flex flex-col gap-6">
+          <form onSubmit={(e) => loginUser(e)} className="flex flex-col gap-6">
             <input
               type="email"
               placeholder="email@gmail.com"

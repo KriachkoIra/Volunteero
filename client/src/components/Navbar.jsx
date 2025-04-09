@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
 export default function Navbar() {
-  const { name } = useContext(UserContext);
+  const { name, role } = useContext(UserContext);
   const navigate = useNavigate();
 
   return (
@@ -15,8 +15,13 @@ export default function Navbar() {
           Home
         </Link>
         <Link to="/participate" className="hover:text-primary mt-3">
-          Participate
+          {role == "organizer" ? "All Tasks" : "Participate"}
         </Link>
+        {role == "organizer" && (
+          <Link to="/add-task" className="hover:text-primary mt-3">
+            Create Task
+          </Link>
+        )}
       </div>
       <div>
         {name ? (

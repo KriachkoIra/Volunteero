@@ -16,8 +16,10 @@ gem "rack"
 gem "rackup"
 gem "rack-contrib"
 gem "sqlite3"
+gem 'dotenv'
 
 group :production do
   gem "pg"
   gem "puma"
 end
+gem "webrick", "~> 1.9"

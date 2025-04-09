@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
 
 export default function RegisterPage() {
   const [email, setEmaiField] = useState("");
   const [name, setNameField] = useState("");
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState("");
-  const [isOrganizer, setIsOrganizer] = useState(false);
+  const [role, setRoleField] = useState("volunteer");
+
+  const { setId, setName, setRole } = useContext(UserContext);
 
   const navigate = useNavigate();
+
+  const registerUser = async (e) => {
+    e.preventDefault();
+
+    const link = "http://localhost:4567/register";
+
+    await axios
+      .post(link, { email, name, password, role })
+      .then(async (res) => {
+        console.log(res);
+        setId(res.data.user.id);
+        setName(res.data.user.name);
+        setRole(res.data.user.role);
+        navigate("/");
+      })
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          setAlert(err.response.data.error);
+        } else {
+          setAlert("Помилка з підключенням до сервера");
+        }
+        console.log(err);
+      });
+  };
 
   return (
     <div className="flex h-[calc(100vh-64px)] justify-center xl:gap-28 lg:gap-20 gap-14">
@@ -19,14 +47,17 @@ export default function RegisterPage() {
           <p className="text-md">
             Welcome to Volunteero! Please fill in your credentials.
           </p>
-          <form onSubmit={(e) => {}} className="flex flex-col gap-6">
+          <form
+            onSubmit={(e) => registerUser(e)}
+            className="flex flex-col gap-6"
+          >
             <select
-              value={isOrganizer}
-              onChange={(e) => setIsOrganizer(e.target.value)}
+              value={role}
+              onChange={(e) => setRoleField(e.target.value)}
               className="bg-secondary py-2 px-1"
             >
-              <option value={false}>I want to be a volunteer</option>
-              <option value={true}>I want to be an organizer</option>
+              <option value="volunteer">I want to be a volunteer</option>
+              <option value="organizer">I want to be an organizer</option>
             </select>
             <input
               type="email"
