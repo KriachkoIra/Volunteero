@@ -7,6 +7,8 @@ import { MapPin, Calendar, Building2 } from "lucide-react";
 export default function ProfilePage() {
   const [alert, setAlert] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   const { name, role, setName, setId, setRole } = useContext(UserContext);
   const navigate = useNavigate();
@@ -41,7 +43,8 @@ export default function ProfilePage() {
           setAlert("Помилка з підключенням до сервера");
         }
         console.log(err);
-      });
+      })
+      .finally(() => setTaskToDelete(null));
   };
 
   const logout = async (e) => {
@@ -69,35 +72,62 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="flex gap-12 m-auto justify-center mt-8">
-      <div className="w-1/5 shadow-lg min-h-60 p-10 flex flex-col items-center">
-        <img
-          src="https://i.pinimg.com/736x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg"
-          width="120px"
-          className="border-3 rounded-full p-2 border-primary"
-        />
-        <p className="font-semibold text-xl mt-3">{name}</p>
-        <p className="text-primary mt-2">{role}</p>
-        {alert && <p className="mt-2 text-red-700">{alert}</p>}
-        <button
-          className="text-white bg-primary px-8 py-2 mt-3 hover:opacity-80"
-          onClick={logout}
-        >
-          Logout
-        </button>
-      </div>
-      <div className="w-2/3 min-h-60">
-        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-7">
-          {tasks.map((task) => (
-            <Task key={task.id} item={task} handleDelete={handleDelete} />
-          ))}
+    <>
+      {taskToDelete != null && (
+        <div className="h-full w-full fixed top-0 bg-black/25 flex">
+          <div className="z-10 bg-white text-black m-auto w-100 p-6 text-center shadow-lg">
+            <p>Are you sure you want to delete this task?</p>
+            <div className="flex gap-4 w-full justify-center mt-4">
+              <button
+                className="border-2 py-1 border-primary w-32 hover:text-white hover:bg-primary"
+                onClick={() => setTaskToDelete(null)}
+              >
+                No
+              </button>
+              <button
+                className="py-1 w-32 text-white bg-primary hover:opacity-80"
+                onClick={() => handleDelete(taskToDelete)}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex gap-12 m-auto justify-center mt-8">
+        <div className="w-1/5 shadow-lg min-h-60 p-10 flex flex-col items-center">
+          <img
+            src="https://i.pinimg.com/736x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg"
+            width="120px"
+            className="border-3 rounded-full p-2 border-primary"
+          />
+          <p className="font-semibold text-xl mt-3">{name}</p>
+          <p className="text-primary mt-2">{role}</p>
+          {alert && <p className="mt-2 text-red-700">{alert}</p>}
+          <button
+            className="text-white bg-primary px-8 py-2 mt-3 hover:opacity-80"
+            onClick={logout}
+          >
+            Logout
+          </button>
+        </div>
+        <div className="w-2/3 min-h-60">
+          <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-7">
+            {tasks.map((task) => (
+              <Task
+                key={task.id}
+                item={task}
+                setTaskToDelete={setTaskToDelete}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-function Task({ item, handleDelete }) {
+function Task({ item, setTaskToDelete }) {
   const { id, title, description, location, date, organizer } = item;
 
   const navigate = useNavigate();
@@ -162,7 +192,7 @@ function Task({ item, handleDelete }) {
               </button>
               <button
                 className="w-full border-2 border-primary py-1 hover:text-white hover:bg-primary"
-                onClick={() => handleDelete(id)}
+                onClick={() => setTaskToDelete(id)}
               >
                 Delete
               </button>
