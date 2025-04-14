@@ -131,7 +131,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date,
+        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }
@@ -143,18 +143,22 @@ class App < Sinatra::Base
   post '/tasks' do
     require_login
     require_role('organizer')
-
+  
+    puts "Received date: #{params[:date]}"
     task = Task.new(
       title: params[:title],
       description: params[:description],
       location: params[:location],
-      date: params[:date],
+      date: params[:date], # Expects 2025-04-14T23:34:00Z
       photo: params[:photo],
       organizer_id: current_user.id
     )
     if task.save
+      raw_date = ActiveRecord::Base.connection.execute("SELECT date FROM tasks WHERE id = #{task.id}").first['date']
+      puts "Raw database date: #{raw_date}"
+      puts "Parsed date: #{task.date&.utc&.iso8601}"
       content_type :json
-      { message: I18n.t('tasks.created'), task: task }.to_json
+      { message: I18n.t('tasks.created'), task: { id: task.id, title: task.title, date: task.date&.utc&.iso8601 } }.to_json
     else
       status 400
       content_type :json
@@ -171,7 +175,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date,
+        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }.to_json
@@ -207,7 +211,6 @@ class App < Sinatra::Base
   get '/my_tasks' do
     require_login
     require_role('organizer')
-  
     content_type :json
     tasks = Task.where(organizer_id: current_user.id).map do |task|
       {
@@ -215,7 +218,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date,
+        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }

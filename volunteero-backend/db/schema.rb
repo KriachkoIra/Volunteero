@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_08_120002) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_15_000001) do
   create_table "applications", force: :cascade do |t|
     t.integer "task_id", null: false
     t.integer "volunteer_id", null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_08_120002) do
     t.string "title", null: false
     t.text "description", null: false
     t.string "location", null: false
-    t.date "date", null: false
+    t.datetime "date"
     t.string "photo"
     t.integer "organizer_id", null: false
     t.datetime "created_at", null: false
