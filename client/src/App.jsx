@@ -8,6 +8,7 @@ import ProfilePage from "./components/ProfilePage";
 import RegisterPage from "./components/RegisterPage";
 import axios from "axios";
 import AddTask from "./components/AddTask";
+import EditTask from "./components/EditTask";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:4567";
@@ -23,6 +24,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/participate" element={<TasksPage />} />
         <Route path="/add-task" element={<AddTask />} />
+        <Route path="/edit-task/:id" element={<EditTask />} />
         <Route path="*" element={<RouteNotFound />} />
       </Routes>
     </BrowserRouter>
