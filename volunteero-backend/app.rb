@@ -204,6 +204,25 @@ class App < Sinatra::Base
     end
   end
 
+  get '/my_tasks' do
+    require_login
+    require_role('organizer')
+  
+    content_type :json
+    tasks = Task.where(organizer_id: current_user.id).map do |task|
+      {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        location: task.location,
+        date: task.date,
+        photo: task.photo,
+        organizer: { id: task.organizer.id, name: task.organizer.name }
+      }
+    end
+    tasks.to_json
+  end
+
   delete '/tasks/:id' do
     require_login
     require_role('organizer')
@@ -248,6 +267,8 @@ class App < Sinatra::Base
     end
   end
 end
+
+
 
 require 'sidekiq'
 
