@@ -1,35 +1,45 @@
 require './config/environment'
 require 'rack/contrib'
 require 'dotenv/load'
+require 'sinatra/cross_origin'
 Dir[File.join(__dir__, 'app/workers', '*.rb')].each { |file| require file }
 
 class App < Sinatra::Base
-  enable :sessions
-
-  set :sessions,
-    key: 'rack.session',
-    path: '/',
-    secret: ENV['SESSION_SECRET'],
-    same_site: :lax,  
-    secure: false     
   register Sinatra::Flash
 
+  register Sinatra::CrossOrigin
+
+  configure do
+    enable :cross_origin
+    enable :sessions
+    set :session_secret, ENV['SESSION_SECRET'] || 'supersecret'
+
+    use Rack::Session::Cookie,
+      key: 'rack.session',
+      path: '/',
+      same_site: :lax,
+      secret: ENV['SESSION_SECRET'] || 'supersecret',
+      expire_after: 60 * 60 * 24 * 7, # 1 week
+      httponly: true
+  end
+
   before do
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
     if request.content_type == 'application/json'
       body = request.body.read
       params.merge!(JSON.parse(body)) unless body.strip.empty?
     end
   end
-
-  use Rack::Cors do
-    allow do
-      origins 'http://localhost:5173'  
-      resource '*',
-               headers: :any,
-               methods: [:get, :post, :put, :delete, :options],
-               credentials: true     
-    end
+  
+  options "*" do
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept, Authorization"
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    200
   end
+
 
   use Rack::Locale
 
@@ -72,7 +82,6 @@ class App < Sinatra::Base
   get '/login' do
     content_type :json
     { message: I18n.t('login.prompt') }.to_json
-    puts "Current user: #{current_user.inspect}"
   end
 
   post '/login' do
@@ -90,6 +99,7 @@ class App < Sinatra::Base
 
   post '/logout' do
     session[:user_id] = nil
+    session.clear
     content_type :json
     { message: I18n.t('logout.success') }.to_json
   end

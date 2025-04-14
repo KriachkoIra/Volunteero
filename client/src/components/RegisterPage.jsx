@@ -69,7 +69,7 @@ export default function RegisterPage() {
             />
             <input
               type="text"
-              placeholder="organization name"
+              placeholder={role == "volunteer" ? "name" : "organization name"}
               value={name}
               onChange={(e) => setNameField(e.target.value)}
               className="border-b-2 border-black py-2"
