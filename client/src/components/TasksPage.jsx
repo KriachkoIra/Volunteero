@@ -88,8 +88,13 @@ function Task({ item }) {
       hour: "2-digit",
       minute: "2-digit",
     };
-    const date = new Date(dateStr);
-    return date.toLocaleString("en-GB", options); // or "uk-UA" for Ukrainian
+
+    let date;
+
+    dateStr[dateStr.length - 1] == "Z"
+      ? (date = new Date(dateStr.slice(0, -1)))
+      : (date = new Date(dateStr));
+    return date.toLocaleString("en-GB", options);
   }
 
   const formattedDate = formatDate(date);

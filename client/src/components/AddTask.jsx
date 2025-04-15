@@ -32,8 +32,7 @@ export default function AddTask() {
     const isoUtcString = new Date(
       localDate.getTime() - localDate.getTimezoneOffset() * 60000
     ).toISOString();
-    const formattedDate = isoUtcString.split(".")[0] + "Z";
-    console.log(formattedDate);
+    const formattedDate = isoUtcString.split(".")[0];
 
     const link = "http://localhost:4567/tasks";
 

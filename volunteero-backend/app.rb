@@ -158,7 +158,7 @@ class App < Sinatra::Base
       puts "Raw database date: #{raw_date}"
       puts "Parsed date: #{task.date&.iso8601}"
       content_type :json
-      { message: I18n.t('tasks.created'), task: { id: task.id, title: task.title, date: task.date&.utc&.iso8601 } }.to_json
+      { message: I18n.t('tasks.created'), task: { id: task.id, title: task.title, date: task.date } }.to_json
     else
       status 400
       content_type :json
@@ -175,7 +175,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date&.iso8601, # Ensure UTC ISO format
+        date: task.date,
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }.to_json
@@ -200,7 +200,7 @@ class App < Sinatra::Base
         date: params[:date],
         photo: params[:photo]
       )
-      puts "Updated date: #{task.date&.iso8601}"
+      puts "Updated date: #{task.date}"
       content_type :json
       { message: I18n.t('tasks.updated'), task: task }.to_json
     else
