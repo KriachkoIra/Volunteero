@@ -12,13 +12,13 @@ class App < Sinatra::Base
   configure do
     enable :cross_origin
     enable :sessions
-    set :session_secret, ENV['SESSION_SECRET'] || 'supersecret'
+    set :session_secret, ENV['SESSION_SECRET']
 
     use Rack::Session::Cookie,
       key: 'rack.session',
       path: '/',
       same_site: :lax,
-      secret: ENV['SESSION_SECRET'] || 'supersecret',
+      secret: ENV['SESSION_SECRET'],
       expire_after: 60 * 60 * 24 * 7, # 1 week
       httponly: true
   end
@@ -131,7 +131,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
+        date: task.date&.iso8601, 
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }
@@ -156,7 +156,7 @@ class App < Sinatra::Base
     if task.save
       raw_date = ActiveRecord::Base.connection.execute("SELECT date FROM tasks WHERE id = #{task.id}").first['date']
       puts "Raw database date: #{raw_date}"
-      puts "Parsed date: #{task.date&.utc&.iso8601}"
+      puts "Parsed date: #{task.date&.iso8601}"
       content_type :json
       { message: I18n.t('tasks.created'), task: { id: task.id, title: task.title, date: task.date&.utc&.iso8601 } }.to_json
     else
@@ -175,7 +175,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
+        date: task.date&.iso8601, # Ensure UTC ISO format
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }.to_json
@@ -190,6 +190,7 @@ class App < Sinatra::Base
     require_login
     require_role('organizer')
 
+    puts "Received date for update: #{params[:date]}"
     task = Task.find_by(id: params[:id], organizer_id: current_user.id)
     if task
       task.update(
@@ -199,6 +200,7 @@ class App < Sinatra::Base
         date: params[:date],
         photo: params[:photo]
       )
+      puts "Updated date: #{task.date&.iso8601}"
       content_type :json
       { message: I18n.t('tasks.updated'), task: task }.to_json
     else
@@ -218,7 +220,7 @@ class App < Sinatra::Base
         title: task.title,
         description: task.description,
         location: task.location,
-        date: task.date&.utc&.iso8601, # Ensure UTC ISO format
+        date: task.date&.iso8601, # Ensure UTC ISO format
         photo: task.photo,
         organizer: { id: task.organizer.id, name: task.organizer.name }
       }
